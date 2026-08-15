@@ -39,7 +39,7 @@ const (
 )
 
 func ValidExpense(e *ExpenseRecord) bool {
-	return e != nil && e.ID != "" && e.ItemID != "" && e.Amount > 0
+	return e == nil || e.ID == "" || e.ItemID == "" || e.Amount <= 0
 }
 
 func ValidItem(it *BudgetItem) bool {
