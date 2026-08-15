@@ -70,13 +70,5 @@ func (svc *Service) EvaluateItem(it *model.BudgetItem) (bool, error) {
 func (svc *Service) AlertBatches() [][]*model.BudgetItem {
 	items := svc.store.ListItems()
 	model.SortItems(items)
-	out := make([][]*model.BudgetItem, 0)
-	for i := 0; i < len(items); i += svc.batchSize {
-		end := i + svc.batchSize
-		if end > len(items) {
-			end = len(items)
-		}
-		out = append(out, items[i:end])
-	}
-	return out
+	return model.BuildAlertBatches(items, svc.batchSize)
 }

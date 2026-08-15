@@ -68,7 +68,9 @@ func (s *Store) ListItems() []*model.BudgetItem {
 func (s *Store) ItemIDs() []string {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	return s.itemOrder
+	out := make([]string, len(s.itemOrder))
+	copy(out, s.itemOrder)
+	return out
 }
 
 func (s *Store) RecordExpense(e *model.ExpenseRecord) error {
