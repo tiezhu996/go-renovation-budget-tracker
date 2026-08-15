@@ -26,7 +26,6 @@ type Store struct {
 
 func New() *Store {
 	return &Store{
-		items:       make(map[string]*model.BudgetItem),
 		alerts:      make(map[string]*model.Alert),
 		itemOrder:   []string{},
 		alertOrder:  []string{},
