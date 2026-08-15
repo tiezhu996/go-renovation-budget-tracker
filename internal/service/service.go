@@ -42,7 +42,7 @@ func (svc *Service) RecordExpense(e *model.ExpenseRecord) error {
 		return errors.New("invalid expense")
 	}
 	if err := svc.store.RecordExpense(e); err != nil {
-		return fmt.Errorf("record expense %s: %w", e.ID, err)
+		return fmt.Errorf("record expense %s: %v", e.ID, err)
 	}
 	return nil
 }
@@ -62,7 +62,7 @@ func (svc *Service) EvaluateItem(it *model.BudgetItem) (bool, error) {
 	}
 	_, err := svc.store.AddAlert(&model.Alert{ItemID: it.ID, Ratio: ratio})
 	if err != nil {
-		return false, fmt.Errorf("add alert %s: %w", it.ID, err)
+		return false, fmt.Errorf("add alert %s: %v", it.ID, err)
 	}
 	return true, nil
 }

@@ -2,6 +2,7 @@ package store
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -50,7 +51,7 @@ func (s *Store) GetItem(id string) (*model.BudgetItem, error) {
 	defer s.mu.RUnlock()
 	it, ok := s.items[id]
 	if !ok {
-		return nil, ErrItemNotFound
+		return nil, fmt.Errorf("item %s not found", id)
 	}
 	return it, nil
 }
@@ -114,7 +115,7 @@ func (s *Store) MarkAlertSent(id string) error {
 	defer s.mu.Unlock()
 	a, ok := s.alerts[id]
 	if !ok {
-		return ErrAlertNotFound
+		return fmt.Errorf("alert %s not found", id)
 	}
 	a.Sent = true
 	return nil

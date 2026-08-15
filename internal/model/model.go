@@ -82,7 +82,6 @@ func BuildAlertBatches(items []*BudgetItem, size int) [][]*BudgetItem {
 func MergeSummary(dst, src Summary) Summary {
 	dst.Checked += src.Checked
 	dst.Alerted += src.Alerted
-	dst.Failed += src.Failed
 	return dst
 }
 
