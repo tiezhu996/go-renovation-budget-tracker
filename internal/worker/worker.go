@@ -21,6 +21,10 @@ func New(svc *service.Service, workers int) *Pool {
 }
 
 func (p *Pool) Check(ctx context.Context) model.Summary {
+	if err := ctx.Err(); err != nil {
+		return model.Summary{}
+	}
+
 	batches := p.svc.AlertBatches()
 
 	var wg sync.WaitGroup
@@ -37,14 +41,17 @@ func (p *Pool) Check(ctx context.Context) model.Summary {
 		}
 	}()
 
-	var sum model.Summary
+	results := make(chan model.Summary, p.workers)
 
 	for i := 0; i < p.workers; i++ {
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
+			var local model.Summary
 			for batch := range ch {
-				var local model.Summary
+				if ctx.Err() != nil {
+					break
+				}
 				for _, it := range batch {
 					triggered, err := p.svc.EvaluateItem(it)
 					local.Checked++
@@ -56,11 +63,19 @@ func (p *Pool) Check(ctx context.Context) model.Summary {
 						local.Alerted++
 					}
 				}
-				sum = model.MergeSummary(sum, local)
 			}
+			results <- local
 		}()
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	var sum model.Summary
+	for local := range results {
+		sum = model.MergeSummary(sum, local)
+	}
 	return sum
 }

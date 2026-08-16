@@ -110,6 +110,8 @@ func (s *Store) ListAlerts() []*model.Alert {
 }
 
 func (s *Store) MarkAlertSent(id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	a, ok := s.alerts[id]
 	if !ok {
 		return ErrAlertNotFound

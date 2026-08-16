@@ -38,6 +38,9 @@ func (svc *Service) AddItem(it *model.BudgetItem) error {
 }
 
 func (svc *Service) RecordExpense(e *model.ExpenseRecord) error {
+	if !model.ValidExpense(e) {
+		return errors.New("invalid expense")
+	}
 	if err := svc.store.RecordExpense(e); err != nil {
 		return fmt.Errorf("record expense %s: %w", e.ID, err)
 	}
