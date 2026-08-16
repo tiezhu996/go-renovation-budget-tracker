@@ -72,7 +72,9 @@ func BuildAlertBatches(items []*BudgetItem, size int) [][]*BudgetItem {
 		if end > len(items) {
 			end = len(items)
 		}
-		out = append(out, items[i:end])
+		batch := make([]*BudgetItem, end-i)
+		copy(batch, items[i:end])
+		out = append(out, batch)
 	}
 	return out
 }
